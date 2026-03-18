@@ -73,12 +73,20 @@ const ApplianceCard = ({ ua, band, isHeavy, onUpdateHours, onRemove }: Appliance
         <span>{band.supplyHours} hrs</span>
       </div>
 
-      {/* Monthly cost */}
-      <div className="mt-3 flex justify-between items-center px-3 py-2 bg-secondary rounded-xl">
-        <span className="text-xs text-muted-foreground">Monthly cost</span>
-        <span className="font-bold font-mono text-sm text-card-foreground tabular-nums">
-          ₦{ua.monthlyCost.toLocaleString('en-NG', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
-        </span>
+      {/* Daily & Monthly cost */}
+      <div className="mt-3 grid grid-cols-2 gap-2">
+        <div className="flex justify-between items-center px-3 py-2 bg-secondary rounded-xl">
+          <span className="text-xs text-muted-foreground">Daily</span>
+          <span className="font-bold font-mono text-sm text-card-foreground tabular-nums">
+            ₦{ua.dailyCost.toLocaleString('en-NG', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+          </span>
+        </div>
+        <div className="flex justify-between items-center px-3 py-2 bg-secondary rounded-xl">
+          <span className="text-xs text-muted-foreground">Monthly</span>
+          <span className="font-bold font-mono text-sm text-card-foreground tabular-nums">
+            ₦{ua.monthlyCost.toLocaleString('en-NG', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+          </span>
+        </div>
       </div>
 
       {/* Wise tip */}
