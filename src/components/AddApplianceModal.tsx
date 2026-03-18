@@ -11,10 +11,30 @@ interface AddApplianceModalProps {
 const AddApplianceModal = ({ addedIds, onAdd }: AddApplianceModalProps) => {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState('');
+  const [customMode, setCustomMode] = useState(false);
+  const [customName, setCustomName] = useState('');
+  const [customWatts, setCustomWatts] = useState('');
 
   const filtered = APPLIANCES.filter(
     a => !addedIds.includes(a.id) && a.name.toLowerCase().includes(search.toLowerCase())
   );
+
+  const handleAddCustom = () => {
+    const watts = parseInt(customWatts);
+    if (!customName.trim() || isNaN(watts) || watts <= 0) return;
+    const custom: Appliance = {
+      id: `custom-${Date.now()}`,
+      name: customName.trim(),
+      average_watts: watts,
+      wise_usage: 'Monitor usage closely and turn off when not needed.',
+      icon: '🔌',
+    };
+    onAdd(custom);
+    setCustomName('');
+    setCustomWatts('');
+    setCustomMode(false);
+    setOpen(false);
+  };
 
   return (
     <>
@@ -33,7 +53,7 @@ const AddApplianceModal = ({ addedIds, onAdd }: AddApplianceModalProps) => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-sm p-4"
-            onClick={() => setOpen(false)}
+            onClick={() => { setOpen(false); setCustomMode(false); }}
           >
             <motion.div
               initial={{ y: 100, opacity: 0 }}
@@ -45,49 +65,103 @@ const AddApplianceModal = ({ addedIds, onAdd }: AddApplianceModalProps) => {
             >
               {/* Header */}
               <div className="flex items-center justify-between p-5 border-b border-border">
-                <h2 className="font-bold text-lg text-card-foreground">Add Appliance</h2>
-                <button onClick={() => setOpen(false)} className="p-2 rounded-xl hover:bg-secondary transition-colors">
+                <h2 className="font-bold text-lg text-card-foreground">
+                  {customMode ? 'Add Custom Device' : 'Add Appliance'}
+                </h2>
+                <button onClick={() => { setOpen(false); setCustomMode(false); }} className="p-2 rounded-xl hover:bg-secondary transition-colors">
                   <X size={20} className="text-muted-foreground" />
                 </button>
               </div>
 
-              {/* Search */}
-              <div className="px-5 py-3">
-                <div className="flex items-center gap-2 bg-secondary rounded-xl px-3 py-2.5">
-                  <Search size={16} className="text-muted-foreground flex-shrink-0" />
-                  <input
-                    type="text"
-                    placeholder="Search appliances..."
-                    value={search}
-                    onChange={e => setSearch(e.target.value)}
-                    className="bg-transparent text-sm w-full outline-none text-foreground placeholder:text-muted-foreground"
-                  />
-                </div>
-              </div>
-
-              {/* List */}
-              <div className="overflow-y-auto flex-1 px-5 pb-5">
-                {filtered.length === 0 ? (
-                  <p className="text-center text-muted-foreground text-sm py-8">No appliances found</p>
-                ) : (
-                  <div className="space-y-2">
-                    {filtered.map(a => (
-                      <button
-                        key={a.id}
-                        onClick={() => { onAdd(a); setOpen(false); setSearch(''); }}
-                        className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-secondary transition-colors text-left"
-                      >
-                        <span className="text-2xl">{a.icon}</span>
-                        <div className="flex-1">
-                          <p className="font-medium text-sm text-card-foreground">{a.name}</p>
-                          <p className="text-xs text-muted-foreground font-mono">{a.average_watts}W</p>
-                        </div>
-                        <Plus size={18} className="text-primary" />
-                      </button>
-                    ))}
+              {customMode ? (
+                <div className="p-5 space-y-4">
+                  <div>
+                    <label className="text-sm font-medium text-card-foreground mb-1 block">Device Name</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Hair Dryer"
+                      value={customName}
+                      onChange={e => setCustomName(e.target.value)}
+                      className="w-full bg-secondary rounded-xl px-3 py-2.5 text-sm outline-none text-foreground placeholder:text-muted-foreground"
+                    />
                   </div>
-                )}
-              </div>
+                  <div>
+                    <label className="text-sm font-medium text-card-foreground mb-1 block">Wattage (W)</label>
+                    <input
+                      type="number"
+                      placeholder="e.g. 1500"
+                      value={customWatts}
+                      onChange={e => setCustomWatts(e.target.value)}
+                      className="w-full bg-secondary rounded-xl px-3 py-2.5 text-sm outline-none text-foreground placeholder:text-muted-foreground"
+                    />
+                  </div>
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => setCustomMode(false)}
+                      className="flex-1 py-3 rounded-xl border border-border text-card-foreground font-medium text-sm hover:bg-secondary transition-colors"
+                    >
+                      Back
+                    </button>
+                    <button
+                      onClick={handleAddCustom}
+                      className="flex-1 py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm hover:opacity-90 transition-opacity"
+                    >
+                      Add Device
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  {/* Search */}
+                  <div className="px-5 py-3">
+                    <div className="flex items-center gap-2 bg-secondary rounded-xl px-3 py-2.5">
+                      <Search size={16} className="text-muted-foreground flex-shrink-0" />
+                      <input
+                        type="text"
+                        placeholder="Search appliances..."
+                        value={search}
+                        onChange={e => setSearch(e.target.value)}
+                        className="bg-transparent text-sm w-full outline-none text-foreground placeholder:text-muted-foreground"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Add Custom Device button */}
+                  <div className="px-5 pb-2">
+                    <button
+                      onClick={() => setCustomMode(true)}
+                      className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border border-dashed border-primary/30 text-primary text-sm font-medium hover:bg-primary-muted transition-colors"
+                    >
+                      <Plus size={16} />
+                      Add Custom Device
+                    </button>
+                  </div>
+
+                  {/* List */}
+                  <div className="overflow-y-auto flex-1 px-5 pb-5">
+                    {filtered.length === 0 ? (
+                      <p className="text-center text-muted-foreground text-sm py-8">No appliances found</p>
+                    ) : (
+                      <div className="space-y-2">
+                        {filtered.map(a => (
+                          <button
+                            key={a.id}
+                            onClick={() => { onAdd(a); setOpen(false); setSearch(''); }}
+                            className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-secondary transition-colors text-left"
+                          >
+                            <span className="text-2xl">{a.icon}</span>
+                            <div className="flex-1">
+                              <p className="font-medium text-sm text-card-foreground">{a.name}</p>
+                              <p className="text-xs text-muted-foreground font-mono">{a.average_watts}W</p>
+                            </div>
+                            <Plus size={18} className="text-primary" />
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
             </motion.div>
           </motion.div>
         )}

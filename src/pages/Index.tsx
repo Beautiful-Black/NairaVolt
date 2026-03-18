@@ -11,6 +11,7 @@ const Index = () => {
     selectedBand,
     userAppliances,
     totalMonthly,
+    totalDaily,
     addAppliance,
     updateHours,
     removeAppliance,
@@ -37,7 +38,7 @@ const Index = () => {
       <main className="max-w-lg mx-auto px-4 py-6">
         <BandSelector selected={selectedBand} onChange={changeBand} />
 
-        <TotalCard total={totalMonthly} band={selectedBand} applianceCount={userAppliances.length} />
+        <TotalCard total={totalMonthly} totalDaily={totalDaily} band={selectedBand} applianceCount={userAppliances.length} />
 
         {/* Appliance list */}
         {userAppliances.length === 0 ? (
@@ -70,8 +71,15 @@ const Index = () => {
           onAdd={addAppliance}
         />
 
+        {/* Disclaimer */}
+        <div className="mt-8 mb-4 p-4 bg-secondary rounded-2xl">
+          <p className="text-[11px] text-muted-foreground leading-relaxed text-center">
+            <span className="font-semibold text-foreground">Disclaimer:</span> Estimates based on average wattages. Actual consumption may vary by brand and device age. WattWise is a management guide, not an official bill.
+          </p>
+        </div>
+
         {/* Footer */}
-        <p className="text-center text-[11px] text-muted-foreground mt-8 mb-4">
+        <p className="text-center text-[11px] text-muted-foreground mb-4">
           Built for Nigerian homes & businesses 🇳🇬
         </p>
       </main>
