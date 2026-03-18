@@ -1,12 +1,29 @@
+import { useState, useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion';
-import { Zap } from 'lucide-react';
+import { Zap, Save } from 'lucide-react';
 import { useCalculator } from '@/hooks/useCalculator';
+import { useProfiles } from '@/hooks/useProfiles';
 import TotalCard from '@/components/TotalCard';
 import BandSelector from '@/components/BandSelector';
 import ApplianceCard from '@/components/ApplianceCard';
 import AddApplianceModal from '@/components/AddApplianceModal';
+import ProfileSwitcher from '@/components/ProfileSwitcher';
+import HistoryChart from '@/components/HistoryChart';
+import PdfExport from '@/components/PdfExport';
 
 const Index = () => {
+  const {
+    profiles,
+    activeProfile,
+    activeProfileId,
+    history,
+    createProfile,
+    deleteProfile,
+    switchProfile,
+    saveProfileState,
+    snapshotHistory,
+  } = useProfiles();
+
   const {
     selectedBand,
     userAppliances,
@@ -17,7 +34,29 @@ const Index = () => {
     removeAppliance,
     changeBand,
     isHeavyHitter,
-  } = useCalculator();
+  } = useCalculator(activeProfile);
+
+  const [costMode, setCostMode] = useState<'daily' | 'monthly'>('monthly');
+
+  // Auto-save profile state when appliances or band change
+  useEffect(() => {
+    if (activeProfileId && userAppliances.length >= 0) {
+      saveProfileState(selectedBand.id, userAppliances);
+    }
+  }, [userAppliances, selectedBand, activeProfileId, saveProfileState]);
+
+  const handleSnapshot = () => {
+    if (activeProfile && totalMonthly > 0) {
+      snapshotHistory(activeProfile.id, activeProfile.name, totalMonthly);
+    }
+  };
+
+  // Auto-create a default profile if none exist
+  useEffect(() => {
+    if (profiles.length === 0) {
+      createProfile('My Home');
+    }
+  }, []);
 
   return (
     <div className="min-h-screen bg-background">
@@ -27,18 +66,45 @@ const Index = () => {
           <div className="p-1.5 gradient-vault rounded-lg">
             <Zap size={18} className="text-primary-foreground" />
           </div>
-          <div>
+          <div className="flex-1">
             <h1 className="font-extrabold text-foreground text-lg leading-none">WattWise</h1>
             <p className="text-[10px] text-muted-foreground tracking-wide">Smart Energy. More Savings.</p>
           </div>
+          {activeProfile && userAppliances.length > 0 && (
+            <button
+              onClick={handleSnapshot}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 text-primary rounded-lg text-xs font-semibold hover:bg-primary/20 transition-colors"
+              title="Save current bill to history"
+            >
+              <Save size={14} />
+              Log
+            </button>
+          )}
         </div>
       </header>
 
       {/* Main */}
       <main className="max-w-lg mx-auto px-4 py-6">
+        <ProfileSwitcher
+          profiles={profiles}
+          activeProfileId={activeProfileId}
+          onSwitch={switchProfile}
+          onCreate={createProfile}
+          onDelete={deleteProfile}
+        />
+
         <BandSelector selected={selectedBand} onChange={changeBand} />
 
-        <TotalCard total={totalMonthly} totalDaily={totalDaily} band={selectedBand} applianceCount={userAppliances.length} />
+        <TotalCard
+          total={totalMonthly}
+          totalDaily={totalDaily}
+          band={selectedBand}
+          applianceCount={userAppliances.length}
+          costMode={costMode}
+          onCostModeChange={setCostMode}
+        />
+
+        <HistoryChart history={history} activeProfileId={activeProfileId} />
 
         {/* Appliance list */}
         {userAppliances.length === 0 ? (
@@ -71,8 +137,18 @@ const Index = () => {
           onAdd={addAppliance}
         />
 
+        <div className="mt-4">
+          <PdfExport
+            appliances={userAppliances}
+            band={selectedBand}
+            totalDaily={totalDaily}
+            totalMonthly={totalMonthly}
+            profileName={activeProfile?.name}
+          />
+        </div>
+
         {/* Disclaimer */}
-        <div className="mt-8 mb-4 p-4 bg-secondary rounded-2xl">
+        <div className="mt-4 mb-4 p-4 bg-secondary rounded-2xl">
           <p className="text-[11px] text-muted-foreground leading-relaxed text-center">
             <span className="font-semibold text-foreground">Disclaimer:</span> Estimates based on average wattages. Actual consumption may vary by brand and device age. WattWise is a management guide, not an official bill.
           </p>

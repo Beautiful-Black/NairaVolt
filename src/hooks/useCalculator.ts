@@ -1,13 +1,40 @@
-import { useState, useMemo, useCallback } from 'react';
-import { TARIFF_BANDS, type TariffBand, type Appliance, type UserAppliance } from '@/data/appliances';
+import { useState, useMemo, useCallback, useEffect } from 'react';
+import { TARIFF_BANDS, APPLIANCES, type TariffBand, type Appliance, type UserAppliance } from '@/data/appliances';
+import { type Profile } from '@/hooks/useProfiles';
 
 const calculateDaily = (watts: number, hours: number, rate: number) => {
   return (watts * hours * rate) / 1000;
 };
 
-export const useCalculator = () => {
+export const useCalculator = (activeProfile: Profile | null) => {
   const [selectedBand, setSelectedBand] = useState<TariffBand>(TARIFF_BANDS[0]);
   const [userAppliances, setUserAppliances] = useState<UserAppliance[]>([]);
+
+  // Restore state from active profile
+  useEffect(() => {
+    if (!activeProfile) {
+      setSelectedBand(TARIFF_BANDS[0]);
+      setUserAppliances([]);
+      return;
+    }
+    const band = TARIFF_BANDS.find(b => b.id === activeProfile.bandId) || TARIFF_BANDS[0];
+    setSelectedBand(band);
+
+    const restored: UserAppliance[] = activeProfile.appliances.map(pa => {
+      const catalogMatch = APPLIANCES.find(a => a.id === pa.applianceId);
+      const appliance: Appliance = catalogMatch || {
+        id: pa.applianceId,
+        name: pa.applianceName,
+        average_watts: pa.applianceWatts,
+        icon: pa.applianceIcon,
+        wise_usage: pa.applianceTip,
+      };
+      const hours = Math.min(pa.hoursPerDay, band.supplyHours);
+      const daily = calculateDaily(appliance.average_watts, hours, band.rate);
+      return { appliance, hoursPerDay: hours, dailyCost: daily, monthlyCost: daily * 30 };
+    });
+    setUserAppliances(restored);
+  }, [activeProfile?.id]); // Only reload when profile switches
 
   const addAppliance = useCallback((appliance: Appliance) => {
     setUserAppliances(prev => {
