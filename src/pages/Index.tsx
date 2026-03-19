@@ -37,6 +37,17 @@ const Index = () => {
   } = useCalculator(activeProfile);
 
   const [costMode, setCostMode] = useState<'daily' | 'monthly'>('monthly');
+  const [dark, setDark] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('wattwise-theme') === 'dark';
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', dark);
+    localStorage.setItem('wattwise-theme', dark ? 'dark' : 'light');
+  }, [dark]);
 
   // Auto-save profile state when appliances or band change
   useEffect(() => {
