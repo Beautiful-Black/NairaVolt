@@ -2,8 +2,8 @@ import { useState, useMemo, useCallback, useEffect } from 'react';
 import { TARIFF_BANDS, APPLIANCES, type TariffBand, type Appliance, type UserAppliance } from '@/data/appliances';
 import { type Profile } from '@/hooks/useProfiles';
 
-const calculateDaily = (watts: number, hours: number, rate: number) => {
-  return (watts * hours * rate) / 1000;
+const calculateDaily = (watts: number, quantity: number, hours: number, rate: number) => {
+  return (watts * quantity * hours * rate) / 1000;
 };
 
 export const useCalculator = (activeProfile: Profile | null) => {
@@ -30,17 +30,18 @@ export const useCalculator = (activeProfile: Profile | null) => {
         wise_usage: pa.applianceTip,
       };
       const hours = Math.min(pa.hoursPerDay, band.supplyHours);
-      const daily = calculateDaily(appliance.average_watts, hours, band.rate);
-      return { appliance, hoursPerDay: hours, dailyCost: daily, monthlyCost: daily * 30 };
+      const qty = pa.quantity || 1;
+      const daily = calculateDaily(appliance.average_watts, qty, hours, band.rate);
+      return { appliance, quantity: qty, hoursPerDay: hours, dailyCost: daily, monthlyCost: daily * 30 };
     });
     setUserAppliances(restored);
-  }, [activeProfile?.id]); // Only reload when profile switches
+  }, [activeProfile?.id]);
 
   const addAppliance = useCallback((appliance: Appliance) => {
     setUserAppliances(prev => {
       if (prev.some(ua => ua.appliance.id === appliance.id)) return prev;
-      const daily = calculateDaily(appliance.average_watts, 1, selectedBand.rate);
-      return [...prev, { appliance, hoursPerDay: 1, dailyCost: daily, monthlyCost: daily * 30 }];
+      const daily = calculateDaily(appliance.average_watts, 1, 1, selectedBand.rate);
+      return [...prev, { appliance, quantity: 1, hoursPerDay: 1, dailyCost: daily, monthlyCost: daily * 30 }];
     });
   }, [selectedBand]);
 
@@ -48,8 +49,19 @@ export const useCalculator = (activeProfile: Profile | null) => {
     setUserAppliances(prev =>
       prev.map(ua => {
         if (ua.appliance.id !== applianceId) return ua;
-        const daily = calculateDaily(ua.appliance.average_watts, hours, selectedBand.rate);
+        const daily = calculateDaily(ua.appliance.average_watts, ua.quantity, hours, selectedBand.rate);
         return { ...ua, hoursPerDay: hours, dailyCost: daily, monthlyCost: daily * 30 };
+      })
+    );
+  }, [selectedBand]);
+
+  const updateQuantity = useCallback((applianceId: string, quantity: number) => {
+    setUserAppliances(prev =>
+      prev.map(ua => {
+        if (ua.appliance.id !== applianceId) return ua;
+        const qty = Math.max(1, Math.min(20, quantity));
+        const daily = calculateDaily(ua.appliance.average_watts, qty, ua.hoursPerDay, selectedBand.rate);
+        return { ...ua, quantity: qty, dailyCost: daily, monthlyCost: daily * 30 };
       })
     );
   }, [selectedBand]);
@@ -63,7 +75,7 @@ export const useCalculator = (activeProfile: Profile | null) => {
     setUserAppliances(prev =>
       prev.map(ua => {
         const clampedHours = Math.min(ua.hoursPerDay, band.supplyHours);
-        const daily = calculateDaily(ua.appliance.average_watts, clampedHours, band.rate);
+        const daily = calculateDaily(ua.appliance.average_watts, ua.quantity, clampedHours, band.rate);
         return { ...ua, hoursPerDay: clampedHours, dailyCost: daily, monthlyCost: daily * 30 };
       })
     );
@@ -91,6 +103,7 @@ export const useCalculator = (activeProfile: Profile | null) => {
     totalDaily,
     addAppliance,
     updateHours,
+    updateQuantity,
     removeAppliance,
     changeBand,
     isHeavyHitter,

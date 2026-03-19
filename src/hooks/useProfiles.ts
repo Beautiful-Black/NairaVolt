@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { type TariffBand, type UserAppliance, TARIFF_BANDS } from '@/data/appliances';
+import { type UserAppliance, TARIFF_BANDS } from '@/data/appliances';
 
 export interface Profile {
   id: string;
@@ -12,19 +12,20 @@ export interface Profile {
     applianceIcon: string;
     applianceTip: string;
     hoursPerDay: number;
+    quantity: number;
   }>;
 }
 
 export interface HistoryEntry {
-  date: string; // YYYY-MM
+  date: string;
   profileId: string;
   profileName: string;
   monthlyTotal: number;
 }
 
-const PROFILES_KEY = 'wattwise-profiles';
-const ACTIVE_KEY = 'wattwise-active-profile';
-const HISTORY_KEY = 'wattwise-history';
+const PROFILES_KEY = 'nairavolt-profiles';
+const ACTIVE_KEY = 'nairavolt-active-profile';
+const HISTORY_KEY = 'nairavolt-history';
 
 const loadProfiles = (): Profile[] => {
   try {
@@ -50,7 +51,6 @@ export const useProfiles = () => {
   const [activeProfileId, setActiveProfileId] = useState<string | null>(loadActiveId);
   const [history, setHistory] = useState<HistoryEntry[]>(loadHistory);
 
-  // Persist
   useEffect(() => { localStorage.setItem(PROFILES_KEY, JSON.stringify(profiles)); }, [profiles]);
   useEffect(() => {
     if (activeProfileId) localStorage.setItem(ACTIVE_KEY, activeProfileId);
@@ -95,6 +95,7 @@ export const useProfiles = () => {
           applianceIcon: ua.appliance.icon,
           applianceTip: ua.appliance.wise_usage,
           hoursPerDay: ua.hoursPerDay,
+          quantity: ua.quantity,
         })),
       };
     }));
@@ -104,7 +105,6 @@ export const useProfiles = () => {
     const now = new Date();
     const date = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
     setHistory(prev => {
-      // Replace existing entry for same month+profile
       const filtered = prev.filter(h => !(h.date === date && h.profileId === profileId));
       return [...filtered, { date, profileId, profileName, monthlyTotal }].sort((a, b) => a.date.localeCompare(b.date));
     });

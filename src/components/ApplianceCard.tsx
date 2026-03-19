@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { X } from 'lucide-react';
+import { X, Minus, Plus } from 'lucide-react';
 import { type UserAppliance, type TariffBand } from '@/data/appliances';
 
 interface ApplianceCardProps {
@@ -7,11 +7,12 @@ interface ApplianceCardProps {
   band: TariffBand;
   isHeavy: boolean;
   onUpdateHours: (id: string, hours: number) => void;
+  onUpdateQuantity: (id: string, qty: number) => void;
   onRemove: (id: string) => void;
 }
 
-const ApplianceCard = ({ ua, band, isHeavy, onUpdateHours, onRemove }: ApplianceCardProps) => {
-  const hourlyCost = (ua.appliance.average_watts / 1000) * band.rate;
+const ApplianceCard = ({ ua, band, isHeavy, onUpdateHours, onUpdateQuantity, onRemove }: ApplianceCardProps) => {
+  const hourlyCost = (ua.appliance.average_watts * ua.quantity / 1000) * band.rate;
   const fillPercent = (ua.hoursPerDay / band.supplyHours) * 100;
 
   return (
@@ -31,7 +32,7 @@ const ApplianceCard = ({ ua, band, isHeavy, onUpdateHours, onRemove }: Appliance
           </div>
           <div>
             <h3 className="font-bold text-card-foreground text-sm sm:text-base">{ua.appliance.name}</h3>
-            <p className="text-xs text-muted-foreground font-mono">{ua.appliance.average_watts}W • ₦{hourlyCost.toFixed(2)}/hr</p>
+            <p className="text-xs text-muted-foreground font-mono">{ua.appliance.average_watts}W × {ua.quantity} • ₦{hourlyCost.toFixed(2)}/hr</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -45,6 +46,28 @@ const ApplianceCard = ({ ua, band, isHeavy, onUpdateHours, onRemove }: Appliance
             className="p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
           >
             <X size={16} />
+          </button>
+        </div>
+      </div>
+
+      {/* Quantity */}
+      <div className="flex items-center justify-between mb-3 px-1">
+        <span className="text-xs font-medium text-muted-foreground">Quantity</span>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => onUpdateQuantity(ua.appliance.id, ua.quantity - 1)}
+            disabled={ua.quantity <= 1}
+            className="w-7 h-7 rounded-lg bg-secondary flex items-center justify-center text-card-foreground hover:bg-muted transition-colors disabled:opacity-30"
+          >
+            <Minus size={14} />
+          </button>
+          <span className="font-bold font-mono text-sm text-card-foreground w-6 text-center tabular-nums">{ua.quantity}</span>
+          <button
+            onClick={() => onUpdateQuantity(ua.appliance.id, ua.quantity + 1)}
+            disabled={ua.quantity >= 20}
+            className="w-7 h-7 rounded-lg bg-secondary flex items-center justify-center text-card-foreground hover:bg-muted transition-colors disabled:opacity-30"
+          >
+            <Plus size={14} />
           </button>
         </div>
       </div>

@@ -31,6 +31,7 @@ const Index = () => {
     totalDaily,
     addAppliance,
     updateHours,
+    updateQuantity,
     removeAppliance,
     changeBand,
     isHeavyHitter,
@@ -39,14 +40,14 @@ const Index = () => {
   const [costMode, setCostMode] = useState<'daily' | 'monthly'>('monthly');
   const [dark, setDark] = useState(() => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('wattwise-theme') === 'dark';
+      return localStorage.getItem('nairavolt-theme') === 'dark';
     }
     return false;
   });
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', dark);
-    localStorage.setItem('wattwise-theme', dark ? 'dark' : 'light');
+    localStorage.setItem('nairavolt-theme', dark ? 'dark' : 'light');
   }, [dark]);
 
   // Auto-save profile state when appliances or band change
@@ -78,8 +79,8 @@ const Index = () => {
             <Zap size={18} className="text-primary-foreground" />
           </div>
           <div className="flex-1">
-            <h1 className="font-extrabold text-foreground text-lg leading-none">WattWise</h1>
-            <p className="text-[10px] text-muted-foreground tracking-wide">Smart Energy. More Savings.</p>
+            <h1 className="font-extrabold text-foreground text-lg leading-none">NairaVolt</h1>
+            <p className="text-[10px] text-muted-foreground tracking-wide">Smart Energy Auditing for Nigeria</p>
           </div>
           {activeProfile && userAppliances.length > 0 && (
             <button
@@ -143,6 +144,7 @@ const Index = () => {
                   band={selectedBand}
                   isHeavy={isHeavyHitter(ua.monthlyCost)}
                   onUpdateHours={updateHours}
+                  onUpdateQuantity={updateQuantity}
                   onRemove={removeAppliance}
                 />
               ))}
@@ -168,13 +170,13 @@ const Index = () => {
         {/* Disclaimer */}
         <div className="mt-4 mb-4 p-4 bg-secondary rounded-2xl">
           <p className="text-[11px] text-muted-foreground leading-relaxed text-center">
-            <span className="font-semibold text-foreground">Disclaimer:</span> Estimates based on average wattages. Actual consumption may vary by brand and device age. WattWise is a management guide, not an official bill.
+            <span className="font-semibold text-foreground">Disclaimer:</span> Estimates based on average wattages. Actual consumption may vary by brand and device age. NairaVolt is a management guide, not an official bill.
           </p>
         </div>
 
         {/* Footer */}
         <p className="text-center text-[11px] text-muted-foreground mb-4">
-          Built for Nigerian homes & businesses 🇳🇬
+          Built for Nigeria 🇳🇬
         </p>
       </main>
     </div>

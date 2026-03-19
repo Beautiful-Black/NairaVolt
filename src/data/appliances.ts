@@ -7,19 +7,19 @@ export interface Appliance {
 }
 
 export const APPLIANCES: Appliance[] = [
-  { id: "ac-1hp-inv", name: "AC (1HP Inverter)", average_watts: 750, wise_usage: "Set to 24°C to save up to 15% on cooling costs.", icon: "❄️" },
-  { id: "ac-1.5hp-inv", name: "AC (1.5HP Inverter)", average_watts: 1100, wise_usage: "Keep the room sealed; a small gap wastes ₦100s per hour.", icon: "❄️" },
-  { id: "ac-2hp-std", name: "AC (2HP Standard)", average_watts: 1800, wise_usage: "High drain! Use only during essential hours on Band A.", icon: "❄️" },
-  { id: "iron-steam", name: "Electric Iron (Steam)", average_watts: 2000, wise_usage: "Iron in bulk once a week to avoid the 'startup' heat waste.", icon: "👔" },
+  { id: "ac-1hp-inv", name: "AC (1HP Inverter)", average_watts: 750, wise_usage: "Set to 24°C to save up to 15% on cooling costs. Switch off 30 mins before leaving; trapped cool air lasts longer than you think.", icon: "❄️" },
+  { id: "ac-1.5hp-inv", name: "AC (1.5HP Inverter)", average_watts: 1100, wise_usage: "Keep the room sealed; a small gap wastes ₦100s per hour. Switch off 30 mins before leaving; trapped cool air lasts longer than you think.", icon: "❄️" },
+  { id: "ac-2hp-std", name: "AC (2HP Standard)", average_watts: 1800, wise_usage: "High drain! Use only during essential hours. Switch off 30 mins before leaving; trapped cool air lasts longer than you think.", icon: "❄️" },
+  { id: "iron-steam", name: "Electric Iron (Steam)", average_watts: 2000, wise_usage: "Iron in bulk once a week to avoid the 'startup' heat waste. Use residual heat for light fabrics after unplugging.", icon: "👔" },
   { id: "iron-dry", name: "Electric Iron (Dry)", average_watts: 1100, wise_usage: "Switch off 5 mins early and use residual heat for light clothes.", icon: "👔" },
-  { id: "kettle", name: "Electric Kettle", average_watts: 2200, wise_usage: "Boiling a full kettle for one cup of tea costs ₦25 on Band A.", icon: "🫖" },
+  { id: "kettle", name: "Electric Kettle", average_watts: 2200, wise_usage: "Boil only what you need; a full kettle for one cup is pure money waste. Costs ₦25 on Band A per boil.", icon: "🫖" },
   { id: "deep-freezer", name: "Deep Freezer (Large)", average_watts: 350, wise_usage: "Opening the door frequently makes the compressor work 2x harder.", icon: "🧊" },
-  { id: "fridge-double", name: "Fridge (Double Door)", average_watts: 250, wise_usage: "Ensure the door seal is airtight and coils are dust-free to prevent the compressor from overworking.", icon: "🧊" },
+  { id: "fridge-double", name: "Fridge (Double Door)", average_watts: 250, wise_usage: "Keep coils dust-free and check the door seal; a leaking seal overworks the compressor. Keep 4 inches from the wall for airflow.", icon: "🧊" },
   { id: "pump-1hp", name: "Pumping Machine (1HP)", average_watts: 750, wise_usage: "Fill storage tanks in one single run to avoid frequent stop-and-start spikes that waste units.", icon: "💧" },
   { id: "water-heater", name: "Water Heater (Bathroom)", average_watts: 3000, wise_usage: "The king of waste! Switch off immediately after 15 mins.", icon: "🚿" },
-  { id: "microwave", name: "Microwave", average_watts: 1200, wise_usage: "Perfect for quick reheats; defrost food in the fridge overnight instead of using the high-energy defrost setting.", icon: "📡" },
+  { id: "microwave", name: "Microwave", average_watts: 1200, wise_usage: "Perfect for quick reheats; defrost food in the fridge overnight instead of using the high-energy defrost setting. Unplug when not in use.", icon: "📡" },
   { id: "washing-machine", name: "Washing Machine", average_watts: 500, wise_usage: "Use cold water wash cycles to reduce energy use by 80%.", icon: "🧺" },
-  { id: "led-tv", name: "LED TV (32-43 inch)", average_watts: 50, wise_usage: "Kill the switch at the wall; that red standby light is a silent unit-eater.", icon: "📺" },
+  { id: "led-tv", name: "LED TV (32-43 inch)", average_watts: 50, wise_usage: "Kill the switch at the wall; that red standby light is a silent unit-eater. Lower backlight in settings.", icon: "📺" },
   { id: "plasma-tv", name: "Plasma TV (Old Model)", average_watts: 250, wise_usage: "High consumption! Consider upgrading to LED to save 75%.", icon: "📺" },
   { id: "home-theater", name: "Home Theater Sound System", average_watts: 150, wise_usage: "Turn off the 'Subwoofer' switch when listening to low volume.", icon: "🔊" },
   { id: "desktop", name: "Desktop Computer", average_watts: 300, wise_usage: "Use 'Sleep Mode' if stepping away for more than 10 mins.", icon: "🖥️" },
@@ -53,6 +53,7 @@ export const TARIFF_BANDS: TariffBand[] = [
 
 export interface UserAppliance {
   appliance: Appliance;
+  quantity: number;
   hoursPerDay: number;
   dailyCost: number;
   monthlyCost: number;
