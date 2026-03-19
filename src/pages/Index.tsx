@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion';
-import { Zap, Save } from 'lucide-react';
+import { Zap, Save, Moon, Sun } from 'lucide-react';
 import { useCalculator } from '@/hooks/useCalculator';
 import { useProfiles } from '@/hooks/useProfiles';
 import TotalCard from '@/components/TotalCard';
