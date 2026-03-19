@@ -91,6 +91,13 @@ const Index = () => {
               Log
             </button>
           )}
+          <button
+            onClick={() => setDark(d => !d)}
+            className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+            title={dark ? 'Switch to light mode' : 'Switch to dark mode'}
+          >
+            {dark ? <Sun size={18} /> : <Moon size={18} />}
+          </button>
         </div>
       </header>
 
