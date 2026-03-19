@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion';
-import { Zap, Save } from 'lucide-react';
+import { Zap, Save, Moon, Sun } from 'lucide-react';
 import { useCalculator } from '@/hooks/useCalculator';
 import { useProfiles } from '@/hooks/useProfiles';
 import TotalCard from '@/components/TotalCard';
@@ -37,6 +37,17 @@ const Index = () => {
   } = useCalculator(activeProfile);
 
   const [costMode, setCostMode] = useState<'daily' | 'monthly'>('monthly');
+  const [dark, setDark] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('wattwise-theme') === 'dark';
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', dark);
+    localStorage.setItem('wattwise-theme', dark ? 'dark' : 'light');
+  }, [dark]);
 
   // Auto-save profile state when appliances or band change
   useEffect(() => {
@@ -80,6 +91,13 @@ const Index = () => {
               Log
             </button>
           )}
+          <button
+            onClick={() => setDark(d => !d)}
+            className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+            title={dark ? 'Switch to light mode' : 'Switch to dark mode'}
+          >
+            {dark ? <Sun size={18} /> : <Moon size={18} />}
+          </button>
         </div>
       </header>
 
