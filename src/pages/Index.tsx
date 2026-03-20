@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion';
-import { Zap, Save, Moon, Sun } from 'lucide-react';
+import { Save, Moon, Sun } from 'lucide-react';
+import nairavoltLogo from '@/assets/nairavolt-logo.jpeg';
 import { useCalculator } from '@/hooks/useCalculator';
 import { useProfiles } from '@/hooks/useProfiles';
 import TotalCard from '@/components/TotalCard';
@@ -75,9 +76,7 @@ const Index = () => {
       {/* Header */}
       <header className="sticky top-0 z-40 bg-background/80 backdrop-blur-xl border-b border-border">
         <div className="max-w-lg mx-auto px-4 py-3 flex items-center gap-2">
-          <div className="p-1.5 gradient-vault rounded-lg">
-            <Zap size={18} className="text-primary-foreground" />
-          </div>
+          <img src={nairavoltLogo} alt="NairaVolt Logo" className="h-10 w-10 rounded-lg object-contain" />
           <div className="flex-1">
             <h1 className="font-extrabold text-foreground text-lg leading-none">NairaVolt</h1>
             <p className="text-[10px] text-muted-foreground tracking-wide">Smart Energy Auditing for Nigeria</p>
