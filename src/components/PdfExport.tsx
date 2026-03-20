@@ -1,6 +1,8 @@
 import { FileDown } from 'lucide-react';
 import { type UserAppliance, type TariffBand } from '@/data/appliances';
 
+const LOGO_BASE64 = '/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAoHBwgHBgoICAgLCgoLDhgQDg0NDh0VFhEYIx8lJCIfIiEmKzcvJik0KSEiMEExNDk7Pj4+JS5ESUM8SDc9Pjv/2wBDAQoLCw4NDhwQEBw7KCIoOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozv/wAARCABQAFADASIAAhEBAxEB/8QAGwABAAIDAQEAAAAAAAAAAAAAAAQGAwUHAQL/xAAxEAABAwMDAwEFCAMAAAAAAAABAAIDBAURBhIhEzFBUSJhgaGxBhQVJDJjccFCkfD/xAAYAQEAAwEAAAAAAAAAAAAAAAAAAQIEA//EACIRAAICAgIBBQEAAAAAAAAAAAABAgMRERIhMSJBUZHB8P/aAAwDAQACEQMRAD8A64iIgCIiAIiIAgzhEQBERAEREAWsv94/BbcKkRtke6QMaxxwD6/RbNUL7Qa7dX01E08RR9Rw97u3yHzVZPSMuXa6qXJeTZWnV1ZdbjHSsoIWh3L39Q+w0dz/AN6qzVMpp6WaYAExxufg+cAlc2s4paq2y0UdTJT1EpMk8vSyxsbOQC7IwM8k+uArVZr4L1piqMjs1UED2yjy72Th3x/oqsZP3MuJkScdTe2+14+v78PixatmvFyZSPpI4g5jnbmvJPA96s65poZ+7UkI/Zf9F0tTBtrs7YFs7KuU3t7CIiubgiIgCp2vKeijpo+lRMluVfM2ON4BLyB3x8h8VcVVtTW66TOnuNBC6arY0U1KxpGYmnPUkGf8j2HoFWXgz5MeVbWjHpe0W2S1XG2OxNLkRVczTxuxna0+jT58nKpsj63St5qaZ/J2OieOwljcOD9D/IVz+z+1XC00FZHcKV9O+SZrmB5HI248FZdbabfe6BtRRx7q2n/QBwZGeW/2Pj6qOPRinjudEZRWpIqegX51RCP2ZPouprnOi9O3q26jjqa23ywQiJ4L3FuASOOxXRlMVpHfAg4Vaa12ERFY3BERAQrtXvttvdUxQdd4exoj3Y3bnAce/lQotT0j2iRzHGKSp6MbmEHj2QHEE57vA4BwtnVMbIxrH0/XbuDsZHslpBB/39FCfbKGQ73WcElznnsDuJBJ4PkgH+RlR2cpKze4sxwahidE8vhkc6Nhe9zGhrAN7mNGXO7ktWMalZK5gipz+YEbqcPOC4F5a/Ppt2k8eFK+40bopY/wo7X7WvbwMgOLhjnw4k8eSvYqSmidA5lq2Opy/ong9Pd+rHPGfKdleNvyRTqSOTofd6aXMrmuDZGgF8TmPc17cHzs8rZW2sNfbaesMLoTPG1+xxBIyM+PChst1FAwbLOAN4kw3GQ4ZA89uTx25PCm0MMdNAKaGlNPFGMNbnIA93KFoKxP1MkIiKTqEREAREQBERAEREARE4wgP//Z';
+
 interface PdfExportProps {
   appliances: UserAppliance[];
   band: TariffBand;
@@ -44,10 +46,11 @@ const PdfExport = ({ appliances, band, totalDaily, totalMonthly, profileName }: 
   <style>
     @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
     body { font-family: -apple-system, 'Segoe UI', sans-serif; margin: 0; padding: 40px; color: #1a1a2e; }
-    .header { background: #008751; color: white; padding: 32px; border-radius: 16px; margin-bottom: 32px; }
-    .header h1 { margin: 0 0 4px; font-size: 22px; font-weight: 800; letter-spacing: 0.5px; }
-    .header .subtitle { margin: 0; font-size: 16px; font-weight: 600; opacity: 0.9; }
-    .header p.tagline { margin: 4px 0 0; opacity: 0.75; font-size: 12px; }
+    .header { background: #008751; color: white; padding: 32px; border-radius: 16px; margin-bottom: 32px; display: flex; align-items: center; gap: 20px; }
+    .header-logo { width: 64px; height: 64px; border-radius: 12px; object-fit: contain; background: white; padding: 4px; }
+    .header-text h1 { margin: 0 0 4px; font-size: 22px; font-weight: 800; letter-spacing: 0.5px; }
+    .header-text .subtitle { margin: 0; font-size: 16px; font-weight: 600; opacity: 0.9; }
+    .header-text p.tagline { margin: 4px 0 0; opacity: 0.75; font-size: 12px; }
     .meta { display: flex; gap: 16px; margin-top: 16px; flex-wrap: wrap; }
     .meta-item { background: rgba(255,255,255,0.15); padding: 8px 16px; border-radius: 8px; font-size: 12px; }
     .summary { display: flex; gap: 16px; margin-bottom: 32px; }
@@ -64,14 +67,17 @@ const PdfExport = ({ appliances, band, totalDaily, totalMonthly, profileName }: 
 </head>
 <body>
   <div class="header">
-    <h1>OFFICIAL ENERGY CONSUMPTION AUDIT</h1>
-    <p class="subtitle">⚡ NairaVolt — ${title}</p>
-    <p class="tagline">Smart Energy Auditing for Nigeria</p>
-    <div class="meta">
-      <div class="meta-item">📅 ${date}</div>
-      <div class="meta-item">⚡ ${band.name} — ₦${band.rate}/kWh</div>
-      <div class="meta-item">🏠 Property: ${title}</div>
-      <div class="meta-item">🔌 ${appliances.length} Appliance${appliances.length !== 1 ? 's' : ''}</div>
+    <img src="data:image/jpeg;base64,${LOGO_BASE64}" class="header-logo" alt="NairaVolt Logo" />
+    <div class="header-text">
+      <h1>OFFICIAL ENERGY CONSUMPTION AUDIT</h1>
+      <p class="subtitle">⚡ NairaVolt — ${title}</p>
+      <p class="tagline">Smart Energy Auditing for Nigeria</p>
+      <div class="meta">
+        <div class="meta-item">📅 ${date}</div>
+        <div class="meta-item">⚡ ${band.name} — ₦${band.rate}/kWh</div>
+        <div class="meta-item">🏠 Property: ${title}</div>
+        <div class="meta-item">🔌 ${appliances.length} Appliance${appliances.length !== 1 ? 's' : ''}</div>
+      </div>
     </div>
   </div>
 

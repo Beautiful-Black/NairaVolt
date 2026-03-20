@@ -5,6 +5,7 @@ import nairavoltLogo from '@/assets/nairavolt-logo.jpeg';
 import { useCalculator } from '@/hooks/useCalculator';
 import { useProfiles } from '@/hooks/useProfiles';
 import { useAuth } from '@/contexts/AuthContext';
+import { useCustomAppliances } from '@/hooks/useCustomAppliances';
 import TotalCard from '@/components/TotalCard';
 import BandSelector from '@/components/BandSelector';
 import ApplianceCard from '@/components/ApplianceCard';
