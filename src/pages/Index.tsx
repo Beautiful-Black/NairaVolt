@@ -14,6 +14,8 @@ import HistoryChart from '@/components/HistoryChart';
 import PdfExport from '@/components/PdfExport';
 
 const Index = () => {
+  const { signOut } = useAuth();
+
   const {
     profiles,
     activeProfile,
