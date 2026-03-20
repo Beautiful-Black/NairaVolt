@@ -166,6 +166,9 @@ const Index = () => {
         <AddApplianceModal
           addedIds={userAppliances.map(ua => ua.appliance.id)}
           onAdd={addAppliance}
+          customAppliances={customAppliances}
+          onAddCustom={addCustomAppliance}
+          onDeleteCustom={deleteCustomAppliance}
         />
 
         <div className="mt-4">
