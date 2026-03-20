@@ -16,6 +16,7 @@ import PdfExport from '@/components/PdfExport';
 
 const Index = () => {
   const { signOut } = useAuth();
+  const { customAppliances, addCustomAppliance, deleteCustomAppliance } = useCustomAppliances();
 
   const {
     profiles,
