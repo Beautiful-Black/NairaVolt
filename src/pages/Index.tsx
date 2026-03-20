@@ -5,6 +5,7 @@ import nairavoltLogo from '@/assets/nairavolt-logo.jpeg';
 import { useCalculator } from '@/hooks/useCalculator';
 import { useProfiles } from '@/hooks/useProfiles';
 import { useAuth } from '@/contexts/AuthContext';
+import { useCustomAppliances } from '@/hooks/useCustomAppliances';
 import TotalCard from '@/components/TotalCard';
 import BandSelector from '@/components/BandSelector';
 import ApplianceCard from '@/components/ApplianceCard';
@@ -15,6 +16,7 @@ import PdfExport from '@/components/PdfExport';
 
 const Index = () => {
   const { signOut } = useAuth();
+  const { customAppliances, addCustomAppliance, deleteCustomAppliance } = useCustomAppliances();
 
   const {
     profiles,
@@ -164,6 +166,9 @@ const Index = () => {
         <AddApplianceModal
           addedIds={userAppliances.map(ua => ua.appliance.id)}
           onAdd={addAppliance}
+          customAppliances={customAppliances}
+          onAddCustom={addCustomAppliance}
+          onDeleteCustom={deleteCustomAppliance}
         />
 
         <div className="mt-4">

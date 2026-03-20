@@ -1,40 +1,61 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Search, X } from 'lucide-react';
+import { Plus, Search, X, Trash2 } from 'lucide-react';
 import { APPLIANCES, type Appliance } from '@/data/appliances';
 
 interface AddApplianceModalProps {
   addedIds: string[];
   onAdd: (appliance: Appliance) => void;
+  customAppliances?: Appliance[];
+  onAddCustom?: (name: string, watts: number) => Promise<Appliance | null>;
+  onDeleteCustom?: (id: string) => Promise<void>;
 }
 
-const AddApplianceModal = ({ addedIds, onAdd }: AddApplianceModalProps) => {
+const AddApplianceModal = ({ addedIds, onAdd, customAppliances = [], onAddCustom, onDeleteCustom }: AddApplianceModalProps) => {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState('');
   const [customMode, setCustomMode] = useState(false);
   const [customName, setCustomName] = useState('');
   const [customWatts, setCustomWatts] = useState('');
+  const [saving, setSaving] = useState(false);
 
-  const filtered = APPLIANCES.filter(
+  const allAppliances = [...APPLIANCES, ...customAppliances];
+  const filtered = allAppliances.filter(
     a => !addedIds.includes(a.id) && a.name.toLowerCase().includes(search.toLowerCase())
   );
 
-  const handleAddCustom = () => {
+  const handleAddCustom = async () => {
     const watts = parseInt(customWatts);
     if (!customName.trim() || isNaN(watts) || watts <= 0) return;
-    const custom: Appliance = {
-      id: `custom-${Date.now()}`,
-      name: customName.trim(),
-      average_watts: watts,
-      wise_usage: 'Monitor usage closely and turn off when not needed.',
-      icon: '🔌',
-    };
-    onAdd(custom);
-    setCustomName('');
-    setCustomWatts('');
-    setCustomMode(false);
-    setOpen(false);
+
+    if (onAddCustom) {
+      setSaving(true);
+      const appliance = await onAddCustom(customName.trim(), watts);
+      setSaving(false);
+      if (appliance) {
+        onAdd(appliance);
+        setCustomName('');
+        setCustomWatts('');
+        setCustomMode(false);
+        setOpen(false);
+      }
+    } else {
+      const custom: Appliance = {
+        id: `custom-${Date.now()}`,
+        name: customName.trim(),
+        average_watts: watts,
+        wise_usage: 'Monitor usage closely and turn off when not needed.',
+        icon: '🔌',
+      };
+      onAdd(custom);
+      setCustomName('');
+      setCustomWatts('');
+      setCustomMode(false);
+      setOpen(false);
+    }
   };
+
+  const isCustom = (id: string) => id.startsWith('custom-');
 
   return (
     <>
@@ -75,6 +96,7 @@ const AddApplianceModal = ({ addedIds, onAdd }: AddApplianceModalProps) => {
 
               {customMode ? (
                 <div className="p-5 space-y-4">
+                  <p className="text-xs text-muted-foreground">Custom devices are saved to your account and available across all profiles.</p>
                   <div>
                     <label className="text-sm font-medium text-card-foreground mb-1 block">Device Name</label>
                     <input
@@ -104,9 +126,10 @@ const AddApplianceModal = ({ addedIds, onAdd }: AddApplianceModalProps) => {
                     </button>
                     <button
                       onClick={handleAddCustom}
-                      className="flex-1 py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm hover:opacity-90 transition-opacity"
+                      disabled={saving}
+                      className="flex-1 py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm hover:opacity-90 transition-opacity disabled:opacity-50"
                     >
-                      Add Device
+                      {saving ? 'Saving...' : 'Add Device'}
                     </button>
                   </div>
                 </div>
@@ -144,18 +167,28 @@ const AddApplianceModal = ({ addedIds, onAdd }: AddApplianceModalProps) => {
                     ) : (
                       <div className="space-y-2">
                         {filtered.map(a => (
-                          <button
-                            key={a.id}
-                            onClick={() => { onAdd(a); setOpen(false); setSearch(''); }}
-                            className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-secondary transition-colors text-left"
-                          >
-                            <span className="text-2xl">{a.icon}</span>
-                            <div className="flex-1">
-                              <p className="font-medium text-sm text-card-foreground">{a.name}</p>
-                              <p className="text-xs text-muted-foreground font-mono">{a.average_watts}W</p>
-                            </div>
-                            <Plus size={18} className="text-primary" />
-                          </button>
+                          <div key={a.id} className="flex items-center gap-1">
+                            <button
+                              onClick={() => { onAdd(a); setOpen(false); setSearch(''); }}
+                              className="flex-1 flex items-center gap-3 p-3 rounded-xl hover:bg-secondary transition-colors text-left"
+                            >
+                              <span className="text-2xl">{a.icon}</span>
+                              <div className="flex-1">
+                                <p className="font-medium text-sm text-card-foreground">{a.name}</p>
+                                <p className="text-xs text-muted-foreground font-mono">{a.average_watts}W</p>
+                              </div>
+                              <Plus size={18} className="text-primary" />
+                            </button>
+                            {isCustom(a.id) && onDeleteCustom && (
+                              <button
+                                onClick={(e) => { e.stopPropagation(); onDeleteCustom(a.id); }}
+                                className="p-2 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                                title="Delete custom device"
+                              >
+                                <Trash2 size={14} />
+                              </button>
+                            )}
+                          </div>
                         ))}
                       </div>
                     )}
