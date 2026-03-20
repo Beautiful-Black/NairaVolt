@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion';
-import { Save, Moon, Sun } from 'lucide-react';
+import { Save, Moon, Sun, LogOut } from 'lucide-react';
 import nairavoltLogo from '@/assets/nairavolt-logo.jpeg';
 import { useCalculator } from '@/hooks/useCalculator';
 import { useProfiles } from '@/hooks/useProfiles';
+import { useAuth } from '@/contexts/AuthContext';
 import TotalCard from '@/components/TotalCard';
 import BandSelector from '@/components/BandSelector';
 import ApplianceCard from '@/components/ApplianceCard';
@@ -13,6 +14,8 @@ import HistoryChart from '@/components/HistoryChart';
 import PdfExport from '@/components/PdfExport';
 
 const Index = () => {
+  const { signOut } = useAuth();
+
   const {
     profiles,
     activeProfile,
@@ -97,6 +100,13 @@ const Index = () => {
             title={dark ? 'Switch to light mode' : 'Switch to dark mode'}
           >
             {dark ? <Sun size={18} /> : <Moon size={18} />}
+          </button>
+          <button
+            onClick={signOut}
+            className="p-2 rounded-lg text-muted-foreground hover:text-destructive hover:bg-muted transition-colors"
+            title="Sign out"
+          >
+            <LogOut size={18} />
           </button>
         </div>
       </header>
