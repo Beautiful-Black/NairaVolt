@@ -43,6 +43,16 @@ const TotalCard = ({ total, totalDaily, band, applianceCount, costMode, onCostMo
           </span>
         </div>
       </div>
+
+      {/* Yearly projection */}
+      <div className="mt-4 pt-4 border-t border-white/15">
+        <div className="flex items-center justify-between">
+          <p className="text-xs opacity-70 font-medium uppercase tracking-wider">Yearly Estimated Cost</p>
+          <p className="text-xl font-extrabold tabular-nums font-mono">
+            ₦{(total * 12).toLocaleString('en-NG', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+          </p>
+        </div>
+      </div>
     </div>
   );
 };

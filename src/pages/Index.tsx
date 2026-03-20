@@ -101,6 +101,13 @@ const Index = () => {
           >
             {dark ? <Sun size={18} /> : <Moon size={18} />}
           </button>
+          <button
+            onClick={signOut}
+            className="p-2 rounded-lg text-muted-foreground hover:text-destructive hover:bg-muted transition-colors"
+            title="Sign out"
+          >
+            <LogOut size={18} />
+          </button>
         </div>
       </header>
 
