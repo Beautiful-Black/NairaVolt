@@ -14,7 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      custom_appliances: {
+        Row: {
+          average_watts: number
+          created_at: string
+          icon: string
+          id: string
+          name: string
+          user_id: string
+          wise_usage: string
+        }
+        Insert: {
+          average_watts: number
+          created_at?: string
+          icon?: string
+          id?: string
+          name: string
+          user_id: string
+          wise_usage?: string
+        }
+        Update: {
+          average_watts?: number
+          created_at?: string
+          icon?: string
+          id?: string
+          name?: string
+          user_id?: string
+          wise_usage?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
