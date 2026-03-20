@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion';
-import { Zap, Save, Moon, Sun } from 'lucide-react';
+import { Save, Moon, Sun } from 'lucide-react';
+import nairavoltLogo from '@/assets/nairavolt-logo.jpeg';
 import { useCalculator } from '@/hooks/useCalculator';
 import { useProfiles } from '@/hooks/useProfiles';
 import TotalCard from '@/components/TotalCard';
