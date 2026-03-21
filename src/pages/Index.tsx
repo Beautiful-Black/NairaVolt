@@ -16,6 +16,7 @@ import HistoryChart from '@/components/HistoryChart';
 import PdfExport from '@/components/PdfExport';
 import MissedDayBanner from '@/components/MissedDayBanner';
 import AutomationToggle from '@/components/AutomationToggle';
+import OnboardingOverlay, { useOnboarding } from '@/components/OnboardingOverlay';
 
 const Index = () => {
   const { signOut } = useAuth();
