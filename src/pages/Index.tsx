@@ -135,6 +135,13 @@ const Index = () => {
 
         <BandSelector selected={selectedBand} onChange={changeBand} />
 
+        <MissedDayBanner show={showMissedBanner} onDismiss={dismissMissedDay} />
+
+        <AutomationToggle
+          profileId={activeProfileId}
+          isAutomated={isAutomated(activeProfileId)}
+          onToggle={toggleAutomation}
+        />
         <TotalCard
           total={totalMonthly}
           totalDaily={totalDaily}
