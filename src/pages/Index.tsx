@@ -16,11 +16,13 @@ import HistoryChart from '@/components/HistoryChart';
 import PdfExport from '@/components/PdfExport';
 import MissedDayBanner from '@/components/MissedDayBanner';
 import AutomationToggle from '@/components/AutomationToggle';
+import OnboardingOverlay, { useOnboarding } from '@/components/OnboardingOverlay';
 
 const Index = () => {
   const { signOut } = useAuth();
   const { customAppliances, addCustomAppliance, deleteCustomAppliance } = useCustomAppliances();
   const { isAutomated, toggleAutomation, showMissedBanner, dismissMissedDay } = useAutomation();
+  const { showOnboarding, currentStep, next, prev, completeOnboarding, steps } = useOnboarding();
   const {
     profiles,
     activeProfile,
@@ -125,23 +127,29 @@ const Index = () => {
 
       {/* Main */}
       <main className="max-w-lg mx-auto px-4 py-6">
-        <ProfileSwitcher
-          profiles={profiles}
-          activeProfileId={activeProfileId}
-          onSwitch={switchProfile}
-          onCreate={createProfile}
-          onDelete={deleteProfile}
-        />
+        <div id="onboard-profiles">
+          <ProfileSwitcher
+            profiles={profiles}
+            activeProfileId={activeProfileId}
+            onSwitch={switchProfile}
+            onCreate={createProfile}
+            onDelete={deleteProfile}
+          />
+        </div>
 
-        <BandSelector selected={selectedBand} onChange={changeBand} />
+        <div id="onboard-band">
+          <BandSelector selected={selectedBand} onChange={changeBand} />
+        </div>
 
         <MissedDayBanner show={showMissedBanner} onDismiss={dismissMissedDay} />
 
-        <AutomationToggle
-          profileId={activeProfileId}
-          isAutomated={isAutomated(activeProfileId)}
-          onToggle={toggleAutomation}
-        />
+        <div id="onboard-automation">
+          <AutomationToggle
+            profileId={activeProfileId}
+            isAutomated={isAutomated(activeProfileId)}
+            onToggle={toggleAutomation}
+          />
+        </div>
         <TotalCard
           total={totalMonthly}
           totalDaily={totalDaily}
@@ -180,13 +188,15 @@ const Index = () => {
           </div>
         )}
 
-        <AddApplianceModal
-          addedIds={userAppliances.map(ua => ua.appliance.id)}
-          onAdd={addAppliance}
-          customAppliances={customAppliances}
-          onAddCustom={addCustomAppliance}
-          onDeleteCustom={deleteCustomAppliance}
-        />
+        <div id="onboard-add-appliance">
+          <AddApplianceModal
+            addedIds={userAppliances.map(ua => ua.appliance.id)}
+            onAdd={addAppliance}
+            customAppliances={customAppliances}
+            onAddCustom={addCustomAppliance}
+            onDeleteCustom={deleteCustomAppliance}
+          />
+        </div>
 
         <div className="mt-4">
           <PdfExport
@@ -210,6 +220,15 @@ const Index = () => {
           Built for Nigeria 🇳🇬
         </p>
       </main>
+
+      <OnboardingOverlay
+        show={showOnboarding}
+        currentStep={currentStep}
+        steps={steps}
+        onNext={next}
+        onPrev={prev}
+        onSkip={completeOnboarding}
+      />
     </div>
   );
 };
