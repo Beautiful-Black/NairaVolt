@@ -66,6 +66,13 @@ const Index = () => {
     }
   }, [userAppliances, selectedBand, activeProfileId, saveProfileState]);
 
+  // Auto-snapshot for automated profiles (once per session per profile)
+  useEffect(() => {
+    if (activeProfile && isAutomated(activeProfileId) && totalMonthly > 0) {
+      snapshotHistory(activeProfile.id, activeProfile.name, totalMonthly);
+    }
+  }, [activeProfileId, isAutomated, totalMonthly]);
+
   const handleSnapshot = () => {
     if (activeProfile && totalMonthly > 0) {
       snapshotHistory(activeProfile.id, activeProfile.name, totalMonthly);
