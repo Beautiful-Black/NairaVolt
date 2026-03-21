@@ -6,6 +6,7 @@ import { useCalculator } from '@/hooks/useCalculator';
 import { useProfiles } from '@/hooks/useProfiles';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCustomAppliances } from '@/hooks/useCustomAppliances';
+import { useAutomation } from '@/hooks/useAutomation';
 import TotalCard from '@/components/TotalCard';
 import BandSelector from '@/components/BandSelector';
 import ApplianceCard from '@/components/ApplianceCard';
@@ -13,6 +14,8 @@ import AddApplianceModal from '@/components/AddApplianceModal';
 import ProfileSwitcher from '@/components/ProfileSwitcher';
 import HistoryChart from '@/components/HistoryChart';
 import PdfExport from '@/components/PdfExport';
+import MissedDayBanner from '@/components/MissedDayBanner';
+import AutomationToggle from '@/components/AutomationToggle';
 
 const Index = () => {
   const { signOut } = useAuth();
