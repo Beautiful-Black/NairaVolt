@@ -2,8 +2,11 @@ import { useState, useMemo, useCallback, useEffect } from 'react';
 import { TARIFF_BANDS, APPLIANCES, type TariffBand, type Appliance, type UserAppliance } from '@/data/appliances';
 import { type Profile } from '@/hooks/useProfiles';
 
+const VAT_RATE = 0.075; // 7.5% statutory VAT
+
 const calculateDaily = (watts: number, quantity: number, hours: number, rate: number) => {
-  return (watts * quantity * hours * rate) / 1000;
+  const base = (watts * quantity * hours * rate) / 1000;
+  return base * (1 + VAT_RATE);
 };
 
 export const useCalculator = (activeProfile: Profile | null) => {
