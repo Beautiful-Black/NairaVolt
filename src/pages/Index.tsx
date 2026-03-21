@@ -127,23 +127,29 @@ const Index = () => {
 
       {/* Main */}
       <main className="max-w-lg mx-auto px-4 py-6">
-        <ProfileSwitcher
-          profiles={profiles}
-          activeProfileId={activeProfileId}
-          onSwitch={switchProfile}
-          onCreate={createProfile}
-          onDelete={deleteProfile}
-        />
+        <div id="onboard-profiles">
+          <ProfileSwitcher
+            profiles={profiles}
+            activeProfileId={activeProfileId}
+            onSwitch={switchProfile}
+            onCreate={createProfile}
+            onDelete={deleteProfile}
+          />
+        </div>
 
-        <BandSelector selected={selectedBand} onChange={changeBand} />
+        <div id="onboard-band">
+          <BandSelector selected={selectedBand} onChange={changeBand} />
+        </div>
 
         <MissedDayBanner show={showMissedBanner} onDismiss={dismissMissedDay} />
 
-        <AutomationToggle
-          profileId={activeProfileId}
-          isAutomated={isAutomated(activeProfileId)}
-          onToggle={toggleAutomation}
-        />
+        <div id="onboard-automation">
+          <AutomationToggle
+            profileId={activeProfileId}
+            isAutomated={isAutomated(activeProfileId)}
+            onToggle={toggleAutomation}
+          />
+        </div>
         <TotalCard
           total={totalMonthly}
           totalDaily={totalDaily}
