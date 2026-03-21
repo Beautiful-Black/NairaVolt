@@ -22,6 +22,7 @@ const Index = () => {
   const { signOut } = useAuth();
   const { customAppliances, addCustomAppliance, deleteCustomAppliance } = useCustomAppliances();
   const { isAutomated, toggleAutomation, showMissedBanner, dismissMissedDay } = useAutomation();
+  const { showOnboarding, currentStep, next, prev, completeOnboarding, steps } = useOnboarding();
   const {
     profiles,
     activeProfile,
