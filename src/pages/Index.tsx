@@ -220,6 +220,15 @@ const Index = () => {
           Built for Nigeria 🇳🇬
         </p>
       </main>
+
+      <OnboardingOverlay
+        show={showOnboarding}
+        currentStep={currentStep}
+        steps={steps}
+        onNext={next}
+        onPrev={prev}
+        onSkip={completeOnboarding}
+      />
     </div>
   );
 };
