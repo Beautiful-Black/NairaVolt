@@ -188,13 +188,15 @@ const Index = () => {
           </div>
         )}
 
-        <AddApplianceModal
-          addedIds={userAppliances.map(ua => ua.appliance.id)}
-          onAdd={addAppliance}
-          customAppliances={customAppliances}
-          onAddCustom={addCustomAppliance}
-          onDeleteCustom={deleteCustomAppliance}
-        />
+        <div id="onboard-add-appliance">
+          <AddApplianceModal
+            addedIds={userAppliances.map(ua => ua.appliance.id)}
+            onAdd={addAppliance}
+            customAppliances={customAppliances}
+            onAddCustom={addCustomAppliance}
+            onDeleteCustom={deleteCustomAppliance}
+          />
+        </div>
 
         <div className="mt-4">
           <PdfExport
