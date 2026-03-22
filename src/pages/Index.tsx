@@ -91,9 +91,8 @@ const Index = () => {
   };
 
   // Auto-create a default profile if none exist (wait for DB load)
-  const { loaded } = useProfiles === undefined ? { loaded: true } : { loaded: true };
   useEffect(() => {
-    if (profiles.length === 0 && profilesLoaded) {
+    if (profilesLoaded && profiles.length === 0) {
       createProfile('My Home');
     }
   }, [profilesLoaded]);
