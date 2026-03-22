@@ -44,6 +44,83 @@ export type Database = {
         }
         Relationships: []
       }
+      profile_appliances: {
+        Row: {
+          appliance_icon: string
+          appliance_id: string
+          appliance_name: string
+          appliance_tip: string
+          appliance_watts: number
+          created_at: string
+          hours_per_day: number
+          id: string
+          profile_id: string
+          quantity: number
+          user_id: string
+        }
+        Insert: {
+          appliance_icon?: string
+          appliance_id: string
+          appliance_name: string
+          appliance_tip?: string
+          appliance_watts: number
+          created_at?: string
+          hours_per_day?: number
+          id?: string
+          profile_id: string
+          quantity?: number
+          user_id: string
+        }
+        Update: {
+          appliance_icon?: string
+          appliance_id?: string
+          appliance_name?: string
+          appliance_tip?: string
+          appliance_watts?: number
+          created_at?: string
+          hours_per_day?: number
+          id?: string
+          profile_id?: string
+          quantity?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profile_appliances_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles_data"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles_data: {
+        Row: {
+          band_id: string
+          created_at: string
+          disco_id: string
+          id: string
+          name: string
+          user_id: string
+        }
+        Insert: {
+          band_id?: string
+          created_at?: string
+          disco_id?: string
+          id?: string
+          name: string
+          user_id: string
+        }
+        Update: {
+          band_id?: string
+          created_at?: string
+          disco_id?: string
+          id?: string
+          name?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
