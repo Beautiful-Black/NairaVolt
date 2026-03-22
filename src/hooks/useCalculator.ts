@@ -43,8 +43,9 @@ export const useCalculator = (activeProfile: Profile | null) => {
   const addAppliance = useCallback((appliance: Appliance) => {
     setUserAppliances(prev => {
       if (prev.some(ua => ua.appliance.id === appliance.id)) return prev;
-      const daily = calculateDaily(appliance.average_watts, 1, 1, selectedBand.rate);
-      return [...prev, { appliance, quantity: 1, hoursPerDay: 1, dailyCost: daily, monthlyCost: daily * 30 }];
+      const hours = 1;
+      const daily = calculateDaily(appliance.average_watts, 1, hours, selectedBand.rate);
+      return [...prev, { appliance, quantity: 1, hoursPerDay: hours, dailyCost: daily, monthlyCost: daily * 30 }];
     });
   }, [selectedBand]);
 

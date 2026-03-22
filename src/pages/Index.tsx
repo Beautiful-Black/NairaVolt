@@ -9,6 +9,7 @@ import { useCustomAppliances } from '@/hooks/useCustomAppliances';
 import { useAutomation } from '@/hooks/useAutomation';
 import TotalCard from '@/components/TotalCard';
 import BandSelector from '@/components/BandSelector';
+import DiSCoSelector from '@/components/DiSCoSelector';
 import ApplianceCard from '@/components/ApplianceCard';
 import AddApplianceModal from '@/components/AddApplianceModal';
 import ProfileSwitcher from '@/components/ProfileSwitcher';
@@ -49,6 +50,9 @@ const Index = () => {
   } = useCalculator(activeProfile);
 
   const [costMode, setCostMode] = useState<'daily' | 'monthly'>('monthly');
+  const [selectedDiSCo, setSelectedDiSCo] = useState(() => {
+    return localStorage.getItem('nairavolt-disco') || 'ikedc';
+  });
   const [dark, setDark] = useState(() => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('nairavolt-theme') === 'dark';
@@ -60,6 +64,10 @@ const Index = () => {
     document.documentElement.classList.toggle('dark', dark);
     localStorage.setItem('nairavolt-theme', dark ? 'dark' : 'light');
   }, [dark]);
+
+  useEffect(() => {
+    localStorage.setItem('nairavolt-disco', selectedDiSCo);
+  }, [selectedDiSCo]);
 
   // Auto-save profile state when appliances or band change
   useEffect(() => {
@@ -137,6 +145,8 @@ const Index = () => {
           />
         </div>
 
+        <DiSCoSelector selected={selectedDiSCo} onChange={setSelectedDiSCo} />
+
         <div id="onboard-band">
           <BandSelector selected={selectedBand} onChange={changeBand} />
         </div>
@@ -150,6 +160,14 @@ const Index = () => {
             onToggle={toggleAutomation}
           />
         </div>
+
+        {/* VAT notice */}
+        <div className="flex items-center justify-end mb-2">
+          <span className="text-[10px] font-mono text-muted-foreground bg-secondary px-2 py-0.5 rounded-md">
+            incl. 7.5% VAT
+          </span>
+        </div>
+
         <TotalCard
           total={totalMonthly}
           totalDaily={totalDaily}
@@ -205,6 +223,7 @@ const Index = () => {
             totalDaily={totalDaily}
             totalMonthly={totalMonthly}
             profileName={activeProfile?.name}
+            discoId={selectedDiSCo}
           />
         </div>
 
