@@ -29,6 +29,7 @@ const Index = () => {
     activeProfile,
     activeProfileId,
     history,
+    loaded: profilesLoaded,
     createProfile,
     deleteProfile,
     switchProfile,
