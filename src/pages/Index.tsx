@@ -89,12 +89,13 @@ const Index = () => {
     }
   };
 
-  // Auto-create a default profile if none exist
+  // Auto-create a default profile if none exist (wait for DB load)
+  const { loaded } = useProfiles === undefined ? { loaded: true } : { loaded: true };
   useEffect(() => {
-    if (profiles.length === 0) {
+    if (profiles.length === 0 && profilesLoaded) {
       createProfile('My Home');
     }
-  }, []);
+  }, [profilesLoaded]);
 
   return (
     <div className="min-h-screen bg-background">
