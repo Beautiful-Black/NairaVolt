@@ -1,5 +1,6 @@
 import { FileDown } from 'lucide-react';
 import { type UserAppliance, type TariffBand } from '@/data/appliances';
+import { DISCO_LIST } from './DiSCoSelector';
 
 const LOGO_BASE64 = '/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAoHBwgHBgoICAgLCgoLDhgQDg0NDh0VFhEYIx8lJCIfIiEmKzcvJik0KSEiMEExNDk7Pj4+JS5ESUM8SDc9Pjv/2wBDAQoLCw4NDhwQEBw7KCIoOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozv/wAARCABQAFADASIAAhEBAxEB/8QAGwABAAIDAQEAAAAAAAAAAAAAAAQGAwUHAQL/xAAxEAABAwMDAwEFCAMAAAAAAAABAAIDBAURBhIhEzFBUSJhgaGxBhQVJDJjccFCkfD/xAAYAQEAAwEAAAAAAAAAAAAAAAAAAQIEA//EACIRAAICAgIBBQEAAAAAAAAAAAABAgMRERIhMSJBUZHB8P/aAAwDAQACEQMRAD8A64iIgCIiAIiIAgzhEQBERAEREAWsv94/BbcKkRtke6QMaxxwD6/RbNUL7Qa7dX01E08RR9Rw97u3yHzVZPSMuXa6qXJeTZWnV1ZdbjHSsoIWh3L39Q+w0dz/AN6qzVMpp6WaYAExxufg+cAlc2s4paq2y0UdTJT1EpMk8vSyxsbOQC7IwM8k+uArVZr4L1piqMjs1UED2yjy72Th3x/oqsZP3MuJkScdTe2+14+v78PixatmvFyZSPpI4g5jnbmvJPA96s65poZ+7UkI/Zf9F0tTBtrs7YFs7KuU3t7CIiubgiIgCp2vKeijpo+lRMluVfM2ON4BLyB3x8h8VcVVtTW66TOnuNBC6arY0U1KxpGYmnPUkGf8j2HoFWXgz5MeVbWjHpe0W2S1XG2OxNLkRVczTxuxna0+jT58nKpsj63St5qaZ/J2OieOwljcOD9D/IVz+z+1XC00FZHcKV9O+SZrmB5HI248FZdbabfe6BtRRx7q2n/QBwZGeW/2Pj6qOPRinjudEZRWpIqegX51RCP2ZPouprnOi9O3q26jjqa23ywQiJ4L3FuASOOxXRlMVpHfAg4Vaa12ERFY3BERAQrtXvttvdUxQdd4exoj3Y3bnAce/lQotT0j2iRzHGKSp6MbmEHj2QHEE57vA4BwtnVMbIxrH0/XbuDsZHslpBB/39FCfbKGQ73WcElznnsDuJBJ4PkgH+RlR2cpKze4sxwahidE8vhkc6Nhe9zGhrAN7mNGXO7ktWMalZK5gipz+YEbqcPOC4F5a/Ppt2k8eFK+40bopY/wo7X7WvbwMgOLhjnw4k8eSvYqSmidA5lq2Opy/ong9Pd+rHPGfKdleNvyRTqSOTofd6aXMrmuDZGgF8TmPc17cHzs8rZW2sNfbaesMLoTPG1+xxBIyM+PChst1FAwbLOAN4kw3GQ4ZA89uTx25PCm0MMdNAKaGlNPFGMNbnIA93KFoKxP1MkIiKTqEREAREQBERAEREARE4wgP//Z';
 
@@ -9,12 +10,15 @@ interface PdfExportProps {
   totalDaily: number;
   totalMonthly: number;
   profileName?: string;
+  discoId?: string;
 }
 
-const PdfExport = ({ appliances, band, totalDaily, totalMonthly, profileName }: PdfExportProps) => {
+const PdfExport = ({ appliances, band, totalDaily, totalMonthly, profileName, discoId }: PdfExportProps) => {
   const handleExport = () => {
     const title = profileName || 'Energy Audit';
     const date = new Date().toLocaleDateString('en-NG', { year: 'numeric', month: 'long', day: 'numeric' });
+    const disco = DISCO_LIST.find(d => d.id === discoId);
+    const discoLabel = disco ? `${disco.name} — ${disco.fullName}` : 'N/A';
 
     const heavyHitters = appliances.filter(ua => totalMonthly > 0 && (ua.monthlyCost / totalMonthly) > 0.4);
 
@@ -57,6 +61,7 @@ const PdfExport = ({ appliances, band, totalDaily, totalMonthly, profileName }: 
     .summary-card { flex: 1; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 20px; text-align: center; }
     .summary-card .label { font-size: 11px; color: #6b7280; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
     .summary-card .value { font-size: 28px; font-weight: 800; color: #008751; font-family: monospace; }
+    .vat-note { text-align: center; font-size: 11px; color: #6b7280; margin-bottom: 24px; }
     table { width: 100%; border-collapse: collapse; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; }
     thead { background: #f9fafb; }
     th { padding: 12px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #6b7280; border-bottom: 2px solid #e5e7eb; text-align: left; }
@@ -74,6 +79,7 @@ const PdfExport = ({ appliances, band, totalDaily, totalMonthly, profileName }: 
       <p class="tagline">Smart Energy Auditing for Nigeria</p>
       <div class="meta">
         <div class="meta-item">📅 ${date}</div>
+        <div class="meta-item">🏢 DisCo: ${discoLabel}</div>
         <div class="meta-item">⚡ ${band.name} — ₦${band.rate}/kWh</div>
         <div class="meta-item">🏠 Property: ${title}</div>
         <div class="meta-item">🔌 ${appliances.length} Appliance${appliances.length !== 1 ? 's' : ''}</div>
@@ -91,6 +97,8 @@ const PdfExport = ({ appliances, band, totalDaily, totalMonthly, profileName }: 
       <div class="value">₦${totalMonthly.toLocaleString('en-NG', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</div>
     </div>
   </div>
+
+  <p class="vat-note">All costs include 7.5% statutory VAT</p>
 
   <table>
     <thead>

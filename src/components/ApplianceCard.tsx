@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { X, Minus, Plus } from 'lucide-react';
 import { type UserAppliance, type TariffBand } from '@/data/appliances';
+import HourNumberLine from './HourNumberLine';
 
 interface ApplianceCardProps {
   ua: UserAppliance;
@@ -13,7 +14,6 @@ interface ApplianceCardProps {
 
 const ApplianceCard = ({ ua, band, isHeavy, onUpdateHours, onUpdateQuantity, onRemove }: ApplianceCardProps) => {
   const hourlyCost = (ua.appliance.average_watts * ua.quantity / 1000) * band.rate;
-  const fillPercent = (ua.hoursPerDay / band.supplyHours) * 100;
 
   return (
     <motion.div
@@ -72,29 +72,12 @@ const ApplianceCard = ({ ua, band, isHeavy, onUpdateHours, onUpdateQuantity, onR
         </div>
       </div>
 
-      {/* Slider */}
-      <div className="relative">
-        <div className="absolute top-[7px] left-0 right-0 h-1.5 bg-secondary rounded-full overflow-hidden pointer-events-none">
-          <div
-            className="h-full bg-primary rounded-full transition-all duration-150"
-            style={{ width: `${fillPercent}%` }}
-          />
-        </div>
-        <input
-          type="range"
-          min={0}
-          max={band.supplyHours}
-          step={0.5}
-          value={ua.hoursPerDay}
-          onChange={e => onUpdateHours(ua.appliance.id, parseFloat(e.target.value))}
-          className="relative z-10 bg-transparent"
-        />
-      </div>
-      <div className="flex justify-between mt-1 text-[11px] font-mono text-muted-foreground">
-        <span>0 hrs</span>
-        <span className="font-semibold text-foreground">{ua.hoursPerDay} hrs/day</span>
-        <span>{band.supplyHours} hrs</span>
-      </div>
+      {/* Hour Number Line */}
+      <HourNumberLine
+        maxHours={band.supplyHours}
+        value={ua.hoursPerDay}
+        onChange={(h) => onUpdateHours(ua.appliance.id, h)}
+      />
 
       {/* Daily & Monthly cost */}
       <div className="mt-3 grid grid-cols-2 gap-2">
