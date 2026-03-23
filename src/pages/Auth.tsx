@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { Shield, LogIn, UserPlus, Loader2 } from 'lucide-react';
+import { Shield, LogIn, UserPlus, Loader2, MailCheck, ArrowLeft } from 'lucide-react';
 import nairavoltLogo from '@/assets/nairavolt-logo.jpeg';
 
 const Auth = () => {
@@ -12,6 +12,8 @@ const Auth = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [signupSuccess, setSignupSuccess] = useState(false);
+  const [signupEmail, setSignupEmail] = useState('');
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -27,11 +29,10 @@ const Auth = () => {
       } else {
         const { error } = await supabase.auth.signUp({ email, password });
         if (error) throw error;
-        toast({
-          title: 'Account created!',
-          description: 'Check your email to verify your account, then log in.',
-        });
-        setIsLogin(true);
+        setSignupEmail(email);
+        setSignupSuccess(true);
+        setEmail('');
+        setPassword('');
       }
     } catch (error: any) {
       toast({
@@ -44,17 +45,54 @@ const Auth = () => {
     }
   };
 
+  if (signupSuccess) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4">
+        <div className="w-full max-w-sm">
+          <div className="flex flex-col items-center mb-8">
+            <img src={nairavoltLogo} alt="NairaVolt Logo" className="h-20 w-20 rounded-2xl object-contain mb-3" />
+          </div>
+          <div className="bg-card rounded-2xl shadow-card p-8 border border-border text-center">
+            <div className="mx-auto w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-5">
+              <MailCheck size={32} className="text-primary" />
+            </div>
+            <h2 className="font-bold text-xl text-foreground mb-2">Check Your Mail! 📧</h2>
+            <p className="text-sm text-muted-foreground mb-1">
+              We've sent a verification link to:
+            </p>
+            <p className="text-sm font-semibold text-foreground mb-4 break-all">{signupEmail}</p>
+            <p className="text-sm text-muted-foreground mb-6">
+              Please verify your account before logging in to NairaVolt.
+            </p>
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => {
+                setSignupSuccess(false);
+                setIsLogin(true);
+              }}
+            >
+              <ArrowLeft size={16} className="mr-2" />
+              Back to Sign In
+            </Button>
+          </div>
+          <p className="text-center text-[11px] text-muted-foreground mt-6">
+            Built for Nigeria 🇳🇬
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4">
       <div className="w-full max-w-sm">
-        {/* Logo */}
         <div className="flex flex-col items-center mb-8">
           <img src={nairavoltLogo} alt="NairaVolt Logo" className="h-20 w-20 rounded-2xl object-contain mb-3" />
           <h1 className="font-extrabold text-2xl text-foreground">NairaVolt</h1>
           <p className="text-sm text-muted-foreground">Smart Energy Auditing for Nigeria</p>
         </div>
 
-        {/* Form Card */}
         <div className="bg-card rounded-2xl shadow-card p-6 border border-border">
           <h2 className="font-bold text-lg text-foreground mb-1 flex items-center gap-2">
             {isLogin ? <LogIn size={20} /> : <UserPlus size={20} />}
@@ -64,7 +102,6 @@ const Auth = () => {
             {isLogin ? 'Sign in to access your energy profiles.' : 'Start tracking your energy costs today.'}
           </p>
 
-          {/* Security warning for signup */}
           {!isLogin && (
             <div className="flex items-start gap-2.5 p-3 mb-4 rounded-xl bg-warning/10 border border-warning/20">
               <Shield size={18} className="text-warning mt-0.5 shrink-0" />
