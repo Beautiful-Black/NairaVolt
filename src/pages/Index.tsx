@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion';
-import { Save, Moon, Sun, LogOut } from 'lucide-react';
+import { Activity, Save, Moon, Sun, LogOut } from 'lucide-react';
 import nairavoltLogo from '@/assets/nairavolt-logo.jpeg';
 import { useCalculator } from '@/hooks/useCalculator';
 import { useProfiles } from '@/hooks/useProfiles';
@@ -18,6 +18,7 @@ import PdfExport from '@/components/PdfExport';
 import MissedDayBanner from '@/components/MissedDayBanner';
 import AutomationToggle from '@/components/AutomationToggle';
 import OnboardingOverlay, { useOnboarding } from '@/components/OnboardingOverlay';
+import MonitoringDashboard from '@/components/MonitoringDashboard';
 
 const Index = () => {
   const { signOut } = useAuth();
@@ -51,6 +52,7 @@ const Index = () => {
   } = useCalculator(activeProfile);
 
   const [costMode, setCostMode] = useState<'daily' | 'monthly'>('monthly');
+  const [workspace, setWorkspace] = useState<'audit' | 'monitor'>('audit');
   const [selectedDiSCo, setSelectedDiSCo] = useState(() => {
     return localStorage.getItem('nairavolt-disco') || 'ikedc';
   });
@@ -101,11 +103,15 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="sticky top-0 z-40 bg-background/80 backdrop-blur-xl border-b border-border">
-        <div className="max-w-lg mx-auto px-4 py-3 flex items-center gap-2">
+        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center gap-2">
           <img src={nairavoltLogo} alt="NairaVolt Logo" className="h-10 w-10 rounded-lg object-contain" />
           <div className="flex-1">
             <h1 className="font-extrabold text-foreground text-lg leading-none">NairaVolt</h1>
             <p className="text-[10px] text-muted-foreground tracking-wide">Smart Energy Auditing for Nigeria</p>
+          </div>
+          <div className="hidden sm:flex items-center gap-1 rounded-xl bg-secondary p-1">
+            <button onClick={() => setWorkspace('audit')} className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${workspace === 'audit' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}><Save size={13} /> Audit</button>
+            <button onClick={() => setWorkspace('monitor')} className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${workspace === 'monitor' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}><Activity size={13} /> Monitor</button>
           </div>
           {activeProfile && userAppliances.length > 0 && (
             <button
@@ -135,7 +141,12 @@ const Index = () => {
       </header>
 
       {/* Main */}
-      <main className="max-w-lg mx-auto px-4 py-6">
+      <main className={`${workspace === 'monitor' ? 'max-w-6xl' : 'max-w-lg'} mx-auto px-4 py-6`}>
+        <div className="mb-5 flex items-center gap-1 rounded-xl bg-secondary p-1 sm:hidden">
+          <button onClick={() => setWorkspace('audit')} className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-xs font-semibold transition-colors ${workspace === 'audit' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground'}`}><Save size={13} /> Audit</button>
+          <button onClick={() => setWorkspace('monitor')} className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-xs font-semibold transition-colors ${workspace === 'monitor' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground'}`}><Activity size={13} /> Monitor</button>
+        </div>
+        {workspace === 'monitor' ? <MonitoringDashboard /> : <>
         <div id="onboard-profiles">
           <ProfileSwitcher
             profiles={profiles}
@@ -239,6 +250,7 @@ const Index = () => {
         <p className="text-center text-[11px] text-muted-foreground mb-4">
           Built for Nigeria 🇳🇬
         </p>
+        </>}
       </main>
 
       <OnboardingOverlay
