@@ -1,0 +1,5 @@
+- [ ] Add simulator-driven IoT monitoring dashboard for buildings and rooms
+- [ ] Add in-app, browser notification, and alert-preference controls
+- [ ] Add classroom automation decisions, safety checks, savings, ROI, and resilience notes
+- [ ] Integrate monitoring workspace into the authenticated NairaVolt dashboard
+- [ ] Verify the new workspace visually and with a production build
