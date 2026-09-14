@@ -69,7 +69,7 @@ const seededAlerts: AlertItem[] = [
 
 const formatNaira = (amount: number) => `₦${Math.round(amount).toLocaleString('en-NG')}`;
 
-const roomStatus = (room: RoomState) => {
+const roomStatus = (room: RoomState): { label: string; tone: 'accent' | 'warning' | 'destructive' } => {
   if (room.occupants === 0 && (room.lightsOn || room.fanOn)) return { label: 'Waste risk', tone: 'destructive' };
   if (room.watts > room.baseline * 1.25) return { label: 'High load', tone: 'warning' };
   return { label: 'Efficient', tone: 'accent' };
@@ -136,7 +136,7 @@ const MonitoringDashboard = () => {
     const room = rooms.find((item) => item.occupants === 0 && item.lightsOn && item.lightsOnMinutes > 120);
     if (!room) return;
     setAlerts((current) => current.some((alert) => alert.id === `empty-${room.id}`) ? current : [
-      { id: `empty-${room.id}`, severity: 'critical', title: `${room.room} has been empty too long`, detail: `Lights and fans are still drawing ${room.watts.toLocaleString()}W.`, time: 'Just now' },
+      { id: `empty-${room.id}`, severity: 'critical' as const, title: `${room.room} has been empty too long`, detail: `Lights and fans are still drawing ${room.watts.toLocaleString()}W.`, time: 'Just now' },
       ...current,
     ].slice(0, 5));
   }, [rooms, running, inAppAlerts]);
@@ -317,11 +317,18 @@ const MonitoringDashboard = () => {
   );
 };
 
-const Metric = ({ label, value, detail, icon, tone }: { label: string; value: string; detail: string; icon: React.ReactNode; tone: 'primary' | 'accent' | 'warning' | 'destructive' }) => (
-  <div className="rounded-2xl border border-border bg-card p-4 shadow-card"><div className={`mb-3 flex h-8 w-8 items-center justify-center rounded-lg bg-${tone}/10 text-${tone}`}>{icon}</div><p className="text-[11px] font-medium text-muted-foreground">{label}</p><p className="mt-1 font-mono text-xl font-extrabold tabular-nums text-card-foreground">{value}</p><p className="mt-1 text-[10px] text-muted-foreground">{detail}</p></div>
+const toneClasses = {
+  primary: 'bg-primary/10 text-primary',
+  accent: 'bg-accent/10 text-accent',
+  warning: 'bg-warning/10 text-warning',
+  destructive: 'bg-destructive/10 text-destructive',
+} as const;
+
+const Metric = ({ label, value, detail, icon, tone }: { label: string; value: string; detail: string; icon: React.ReactNode; tone: keyof typeof toneClasses }) => (
+  <div className="rounded-2xl border border-border bg-card p-4 shadow-card"><div className={`mb-3 flex h-8 w-8 items-center justify-center rounded-lg ${toneClasses[tone]}`}>{icon}</div><p className="text-[11px] font-medium text-muted-foreground">{label}</p><p className="mt-1 font-mono text-xl font-extrabold tabular-nums text-card-foreground">{value}</p><p className="mt-1 text-[10px] text-muted-foreground">{detail}</p></div>
 );
 
-const StatusPill = ({ tone, children }: { tone: string; children: React.ReactNode }) => <span className={`mt-1 inline-flex rounded-full bg-${tone}/10 px-2 py-0.5 text-[10px] font-semibold text-${tone}`}>{children}</span>;
+const StatusPill = ({ tone, children }: { tone: 'accent' | 'warning' | 'destructive'; children: React.ReactNode }) => <span className={`mt-1 inline-flex rounded-full px-2 py-0.5 text-[10px] font-semibold ${toneClasses[tone]}`}>{children}</span>;
 
 const AutomationDecision = ({ icon, title, text }: { icon: React.ReactNode; title: string; text: string }) => <div className="rounded-xl bg-secondary/60 p-3"><div className="flex items-center gap-2 text-primary"><span>{icon}</span><span className="text-xs font-semibold text-foreground">{title}</span></div><p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">{text}</p></div>;
 
