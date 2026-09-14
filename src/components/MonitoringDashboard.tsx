@@ -69,7 +69,7 @@ const seededAlerts: AlertItem[] = [
 
 const formatNaira = (amount: number) => `₦${Math.round(amount).toLocaleString('en-NG')}`;
 
-const roomStatus = (room: RoomState) => {
+const roomStatus = (room: RoomState): { label: string; tone: 'accent' | 'warning' | 'destructive' } => {
   if (room.occupants === 0 && (room.lightsOn || room.fanOn)) return { label: 'Waste risk', tone: 'destructive' };
   if (room.watts > room.baseline * 1.25) return { label: 'High load', tone: 'warning' };
   return { label: 'Efficient', tone: 'accent' };
