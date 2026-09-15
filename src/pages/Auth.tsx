@@ -41,7 +41,15 @@ const Auth = () => {
     const { data, error } = await supabase.functions.invoke(functionName, { body });
     if (error) {
       let message = error.message;
-      if (data && typeof data === 'object' && 'error' in data && typeof data.error === 'string') message = data.error;
+      const response = 'context' in error && error.context instanceof Response ? error.context : null;
+      if (response) {
+        const responseBody = await response.json().catch(() => null) as unknown;
+        if (responseBody && typeof responseBody === 'object' && 'error' in responseBody && typeof responseBody.error === 'string') {
+          message = responseBody.error;
+        }
+      } else if (data && typeof data === 'object' && 'error' in data && typeof data.error === 'string') {
+        message = data.error;
+      }
       throw new Error(message);
     }
     return data;
