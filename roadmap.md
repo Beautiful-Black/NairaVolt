@@ -3,3 +3,7 @@
 - [x] Add classroom automation decisions, safety checks, savings, ROI, and resilience notes
 - [x] Integrate monitoring workspace into the authenticated NairaVolt dashboard
 - [x] Verify the new workspace visually and with a production build
+- [x] Add forgot-password email, OTP, and new-password screens
+- [x] Deploy secure OTP request, verification, expiry, and password-update functions
+- [x] Enable email/password authentication and breached-password protection
+- [ ] Configure transactional OTP delivery after a sender domain is connected

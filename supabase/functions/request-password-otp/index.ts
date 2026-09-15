@@ -34,8 +34,16 @@ Deno.serve(async (req) => {
 
   const email = parsed.data.email.toLowerCase()
   const admin = createClient(supabaseUrl, serviceRoleKey, { auth: { persistSession: false } })
-  const { data: userResult, error: userError } = await admin.auth.admin.getUserByEmail(email)
-  if (userError || !userResult.user) return jsonResponse({ error: 'No NairaVolt account was found for this email.' }, 404)
+  let page = 1
+  let matchingUser = null
+  while (!matchingUser) {
+    const { data: userResult, error: userError } = await admin.auth.admin.listUsers({ page, perPage: 100 })
+    if (userError) return jsonResponse({ error: 'We could not check that email right now. Please try again.' }, 500)
+    matchingUser = userResult.users.find((user) => user.email?.toLowerCase() === email) ?? null
+    if (matchingUser || userResult.users.length < 100) break
+    page += 1
+  }
+  if (!matchingUser) return jsonResponse({ error: 'No NairaVolt account was found for this email.' }, 404)
 
   const digits = new Uint32Array(1)
   crypto.getRandomValues(digits)
@@ -48,7 +56,7 @@ Deno.serve(async (req) => {
 
   const { error: insertError } = await admin.from('password_reset_otps').insert({
     email,
-    user_id: userResult.user.id,
+    user_id: matchingUser.id,
     otp_hash: otpHash,
     otp_salt: salt,
     expires_at: expiresAt,
@@ -59,7 +67,7 @@ Deno.serve(async (req) => {
     body: {
       templateName: 'password-reset-otp',
       recipientEmail: email,
-      idempotencyKey: `password-reset-otp-${userResult.user.id}-${otpHash.slice(0, 16)}`,
+      idempotencyKey: `password-reset-otp-${matchingUser.id}-${otpHash.slice(0, 16)}`,
       templateData: { otp, expiresInMinutes: 10 },
     },
   })
