@@ -7,3 +7,4 @@
 - [x] Deploy secure OTP request, verification, expiry, and password-update functions
 - [x] Enable email/password authentication and breached-password protection
 - [ ] Configure transactional OTP delivery after a sender domain is connected
+- [ ] Enforce owner-only editing and add authenticated user feedback collection
