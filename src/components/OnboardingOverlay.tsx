@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ChevronRight, ChevronLeft, Zap, SlidersHorizontal, ToggleRight, Users } from 'lucide-react';
+import { X, ChevronRight, ChevronLeft, MapPin, Wrench, Bell, FileDown } from 'lucide-react';
 
 const ONBOARDING_KEY = 'nairavolt-onboarded';
 
@@ -13,28 +13,28 @@ interface OnboardingStep {
 
 const STEPS: OnboardingStep[] = [
   {
-    targetId: 'onboard-band',
-    title: 'Select Your NERC Band',
-    description: 'Choose your electricity tariff band (A–E). This determines your rate per kWh and maximum supply hours.',
-    icon: <Zap size={18} />,
+    targetId: 'onboard-locations',
+    title: 'Create your locations',
+    description: 'Use the location selector to create and switch between places such as a home, shop, or office.',
+    icon: <MapPin size={18} />,
   },
   {
-    targetId: 'onboard-add-appliance',
-    title: 'Add Your Appliances',
-    description: 'Tap "Add Appliance" to pick devices. Use the Qty counter and Hours slider to match your real usage.',
-    icon: <SlidersHorizontal size={18} />,
+    targetId: 'onboard-spaces',
+    title: 'Record spaces and appliances',
+    description: 'Add your own spaces, then enter each appliance name, wattage, quantity, and daily hours.',
+    icon: <Wrench size={18} />,
   },
   {
-    targetId: 'onboard-automation',
-    title: 'Automate Daily Tracking',
-    description: 'Enable this toggle to automatically log your daily usage. NairaVolt tracks your spending over time.',
-    icon: <ToggleRight size={18} />,
+    targetId: 'onboard-alerts',
+    title: 'Set practical alert limits',
+    description: 'Choose the wattage and hours limits that should appear in your manual Alert Centre.',
+    icon: <Bell size={18} />,
   },
   {
-    targetId: 'onboard-profiles',
-    title: 'Switch Between Profiles',
-    description: 'Create separate profiles for Home, Office, or Shop. Each saves its own appliance list and history.',
-    icon: <Users size={18} />,
+    targetId: 'onboard-reports',
+    title: 'Export your audit',
+    description: 'Download a printable report or raw CSV whenever you need to share the estimate.',
+    icon: <FileDown size={18} />,
   },
 ];
 
